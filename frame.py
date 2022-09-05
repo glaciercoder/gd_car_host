@@ -1,6 +1,7 @@
 from operator import mod
 from traceback import FrameSummary
 import numpy as np
+import socket 
 
 class Frame:
     def __init__(self, ID) -> None:
@@ -34,15 +35,21 @@ class Frame:
         mode = np.right_shift(np.bitwise_and(0xC0, self.data[4]), 4)
         return speed, steer, auto_driving, stop, mode
 
+    def sendto(self, ip_address, port_number):
+        self.display_message()
+        serverName = ip_address
+        serverPort = port_number
+        clientSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        clientSocket.sendto(self.data, (serverName, serverPort))
+        clientSocket.close()
+
     def display_message(self):
         message = ''
         for i in range(0, 8):
             message = message + ' ' + str(np.uint8(self.data[i]))
         print(message)
 
-# frame = Frame(0x100)
-# frame.ADCmd_gen('1.3', '1',  0, 0, 4)
-# frame = Frame(0x100)
-# frame.ADCmd_gen(-1.3, -10.12, 0, 0, 4)
-# frame.display_message()
+frame = Frame(0x100)
+frame.ADCmd_gen('1.3', '1',  0, 0, 4)
+frame.sendto('10.0.3.176', 1088)
 # frame.ADCmd_decode()

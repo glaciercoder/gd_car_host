@@ -32,7 +32,8 @@ class Frame:
         # print(np.binary_repr(steer, width=16))
         auto_driving = np.bitwise_and(0x03, self.data[4]) 
         stop = np.right_shift(np.bitwise_and(0x0C, self.data[4]), 2)
-        mode = np.right_shift(np.bitwise_and(0xC0, self.data[4]), 4)
+        mode = np.right_shift(np.bitwise_and(0x30, self.data[4]), 4)
+        print(mode)
         return speed, steer, auto_driving, stop, mode
 
     def sendto(self, ip_address, port_number):
@@ -50,6 +51,7 @@ class Frame:
         print(message)
 
 frame = Frame(0x100)
-frame.ADCmd_gen('1.3', '1',  0, 0, 4)
-frame.sendto('10.0.3.176', 1088)
-# frame.ADCmd_decode()
+frame.ADCmd_gen('-1.3', '1',  0, 0, 3)
+frame.display_message()
+# frame.sendto('192.168.1.200', 1088)
+frame.ADCmd_decode()

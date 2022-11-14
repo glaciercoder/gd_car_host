@@ -33,8 +33,27 @@ class Frame:
         auto_driving = np.bitwise_and(0x03, self.data[4]) 
         stop = np.right_shift(np.bitwise_and(0x0C, self.data[4]), 2)
         mode = np.right_shift(np.bitwise_and(0x30, self.data[4]), 4)
-        print(mode)
         return speed, steer, auto_driving, stop, mode
+
+    def End_gen(self, angle, position):
+        if self.ID == 0x107:
+            angle = np.int16(angle * 100)
+            self.data[0] = np.bitwise_and(angle, 0x00FF)
+            self.data[1] = np.right_shift(np.bitwise_and(angle, 0xFF00), 8)
+
+
+    def End_decode(self):
+        if self.ID == 0x107:
+            angle = np.int16(0)
+            angle = np.bitwise_or(np.left_shift(self.data[1], 8), np.bitwise_and(self.data[0], 0x00FF))
+        pass
+        return angle / 100
+
+    def Lift_gen(self, angle):
+        pass
+
+    def Lift_decode(self):
+        pass
 
     def sendto(self, ip_address, port_number):
         self.display_message()
@@ -50,8 +69,10 @@ class Frame:
             message = message + ' ' + str(np.uint8(self.data[i]))
         print(message)
 
-frame = Frame(0x100)
-frame.ADCmd_gen('-1.3', '1',  0, 0, 3)
-frame.display_message()
+# frame = Frame(0x100)
+# frame.ADCmd_gen('-1.3', '1',  0, 0, 3)
 # frame.sendto('192.168.1.200', 1088)
-frame.ADCmd_decode()
+# frame.ADCmd_decode()
+frame = Frame(0x107)
+frame.End_gen(-10.5, 0)
+print(frame.End_decode())

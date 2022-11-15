@@ -90,6 +90,7 @@ def run_menu():
             if_send = False
 
         pygame.display.flip()
+        
 
 
 
